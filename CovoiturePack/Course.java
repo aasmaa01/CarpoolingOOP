@@ -1,6 +1,6 @@
 package CovoiturePack;
 
-//Course.java
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +11,15 @@ import java.util.List;
  */
 public class Course {
     public enum TypeCourse {
-
         ALLER_SIMPLE,
         RETOUR_SIMPLE,
         ALLER_RETOUR
-    
     }
-    public enum StatutCourse { PLANIFIEE, EN_COURS, TERMINEE }
+    public enum StatutCourse {
+        PLANIFIEE,
+        EN_COURS,
+        TERMINEE
+    }
 
     private Utilisateur conducteur;
     private List<Utilisateur> passagers;
@@ -36,8 +38,12 @@ public class Course {
      * @param capacite La capacité maximale de passagers
      * @param statut Le statut initial de la course
      */
-    public Course(Utilisateur conducteur, Itineraire itineraire, Disponibilite disponibilite, 
-                  TypeCourse typeCourse, int capacite, StatutCourse statut) {
+    public Course(Utilisateur conducteur,
+                  Itineraire itineraire,
+                  Disponibilite disponibilite,
+                  TypeCourse typeCourse,
+                  int capacite,
+                  StatutCourse statut) {
         this.conducteur = conducteur;
         this.itineraire = itineraire;
         this.disponibilite = disponibilite;
@@ -47,90 +53,66 @@ public class Course {
         this.statut = statut;
     }
 
-    public Utilisateur getConducteur() {
-        return conducteur;
-    }
+    // --- Getters & setters ---
+    public Utilisateur getConducteur() { return conducteur; }
+    public void setConducteur(Utilisateur conducteur) { this.conducteur = conducteur; }
 
-    public void setConducteur(Utilisateur conducteur) {
-        this.conducteur = conducteur;
-    }
+    public List<Utilisateur> getPassagers() { return passagers; }
+    public void setPassagers(List<Utilisateur> passagers) { this.passagers = passagers; }
 
-    public List<Utilisateur> getPassagers() {
-        return passagers;
-    }
+    public Itineraire getItineraire() { return itineraire; }
+    public void setItineraire(Itineraire itineraire) { this.itineraire = itineraire; }
 
-    public void setPassagers(List<Utilisateur> passagers) {
-        this.passagers = passagers;
-    }
+    public Disponibilite getDisponibilite() { return disponibilite; }
+    public void setDisponibilite(Disponibilite disponibilite) { this.disponibilite = disponibilite; }
 
-    public Itineraire getItineraire() {
-        return itineraire;
-    }
+    public TypeCourse getTypeCourse() { return typeCourse; }
+    public void setTypeCourse(TypeCourse typeCourse) { this.typeCourse = typeCourse; }
 
-    public void setItineraire(Itineraire itineraire) {
-        this.itineraire = itineraire;
-    }
+    public int getCapacite() { return capacite; }
+    public void setCapacite(int capacite) { this.capacite = capacite; }
 
-    public Disponibilite getDisponibilite() {
-        return disponibilite;
-    }
+    public int getPlacesDisponibles() { return capacite - passagers.size(); }
 
-    public void setDisponibilite(Disponibilite disponibilite) {
-        this.disponibilite = disponibilite;
-    }
+    public StatutCourse getStatut() { return statut; }
 
-    public TypeCourse getTypeCourse() {
-        return typeCourse;
-    }
-
-    public void setTypeCourse(TypeCourse typeCourse) {
-        this.typeCourse = typeCourse;
-    }
-
-    public int getCapacite() {
-        return capacite;
-    }
-
-    public void setCapacite(int capacite) {
-        this.capacite = capacite;
-    }
-
-    public int getPlacesDisponibles() {
-        return capacite - passagers.size();
-    }
-
-    public StatutCourse getStatut() {
-        return statut;
-    }
+    // --- Méthodes métiers ---
 
     /**
      * Vérifie si un passager est compatible avec le conducteur en fonction des préférences,
      * de l'itinéraire et de la disponibilité.
-     * @param passager Le passager à vérifier
+     * @param passager   Le passager à vérifier
      * @param conducteur Le conducteur de la course
      * @return true si compatible, false sinon
      */
     public boolean isCompatible(Utilisateur passager, Utilisateur conducteur) {
-        // Vérifier les préférences (par exemple, sexe, musique, bagages)
-        // Note : La classe Preference n'a pas de méthode pour comparer directement les préférences
-        // On suppose que Preference a une méthode isMatch() pour vérifier la compatibilité
-        // À implémenter selon la logique définie par Imene
-        // Placeholder for future preference compatibility logic
-        // Placeholder for future preference compatibility logic
+        // a) Itinéraire
+        Itineraire itinCond = this.itineraire;
+        // pour l'exemple, on reconstitue un itinéraire passager simple
+        Itineraire itinPass = new ItinerairePassager(
+            passager.getPointDepart(),
+            /* à remplacer par la destination réelle du passager */ "Destination"
+        );
+        boolean itinOk = itinCond.getPointDepart().equals(itinPass.getPointDepart())
+                       && itinCond.getPointsArrivee().containsAll(itinPass.getPointsArrivee());
+        if (!itinOk) return false;
 
-        // Vérifier les itinéraires
-        Itineraire passagerItineraire = new ItinerairePassager(passager.getPointDepart(), "Destination"); // Placeholder
-        boolean itineraireCompatible = itineraire.getPointDepart().equals(passagerItineraire.getPointDepart()) &&
-                                       itineraire.getPointsArrivee().containsAll(passagerItineraire.getPointsArrivee());
+        // b) Préférences
+        if (!conducteur.getPreference().isMatch(passager.getPreference())) {
+            return false;
+        }
 
-        // Vérifier la disponibilité
-        Disponibilite passagerDispo = new Disponibilite(Disponibilite.TypeDisponibilite.JOURNALIER, 
-                                                        List.of(Disponibilite.Jour.LUNDI), 
-                                                        "08:00", "18:00"); // Placeholder
-        boolean dispoCompatible = disponibilite.getJoursDisponibles().stream()
-            .anyMatch(jour -> passagerDispo.estDisponible(jour, disponibilite.getHeureDepart()));
+        // c) Disponibilités
+        Disponibilite dispoCond = this.disponibilite;
+        Disponibilite dispoPass = passager.getDisponibilite();
+        for (Disponibilite.Jour jour : dispoCond.getJoursDisponibles()) {
+            LocalTime heure = dispoCond.getHeureDepart();
+            if (!dispoPass.estDisponible(jour, heure)) {
+                return false;
+            }
+        }
 
-        return itineraireCompatible && dispoCompatible; // Ajouter la vérification des préférences une fois implémentée
+        return true;
     }
 
     /**
@@ -170,13 +152,6 @@ public class Course {
             throw new IllegalStateException("La course n'est pas en cours");
         }
         statut = StatutCourse.TERMINEE;
-        // Post-trip: déclencher la collecte d'évaluations (à implémenter par Raghad)
-        // EvaluationService.collecterEvaluations(this);
-        // Mise à jour automatique de la réputation (à implémenter par Raghad)
-        // ReputationService.mettreAJourReputation(conducteur);
-        // for (Utilisateur p : passagers) {
-        //     ReputationService.mettreAJourReputation(p);
-        // }
     }
 
     @Override
@@ -187,6 +162,7 @@ public class Course {
                ", itineraire=" + itineraire +
                ", disponibilite=" + disponibilite +
                ", typeCourse=" + typeCourse +
+               ", statut=" + statut +
                '}';
     }
 }

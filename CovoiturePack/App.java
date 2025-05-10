@@ -2,10 +2,12 @@ package CovoiturePack;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 /**
  * Auteur : Asma
@@ -21,27 +23,56 @@ public class App {
     }
 
     private static void chargerDonneesInitiales() {
+        // Préférences et disponibilités par défaut
+        Preference prefIndiff = new Preference(
+            Preference.SexePreference.INDIFFERENT,
+            Preference.MusiquePreference.INDIFFERENT,
+            Preference.BagagePreference.INDIFFERENT);
+        List<Disponibilite.Jour> allDays = Arrays.asList(Disponibilite.Jour.values());
+        Disponibilite dispoAll = new Disponibilite(
+            Disponibilite.TypeDisponibilite.QUOTIDIEN,
+            allDays,
+            "00:00", "23:59");
+
         // Utilisateurs existants
-        utilisateurs.add(new Etudiant("Soltani", "Asma", "31640602", "Etudiant", "Bab Ezzouar", 2022, "Informatique", "Acad"));
-        utilisateurs.add(new Etudiant("Nwel", "Nawel", "31640607", "Etudiant", "El Harrach", 2022, "Mathematiques", "Acad"));
-        utilisateurs.add(new Etudiant("Amine", "Amine", "31640606", "Etudiant", "El Harrach", 2022, "Mathematiques", "Acad"));
-        utilisateurs.add(new Etudiant("Salim", "Salim", "31640605", "Etudiant", "El Harrach", 2022, "Mathematiques", "Acad"));
-        utilisateurs.add(new Etudiant("Younes", "Ali", "31640601", "Etudiant", "El Harrach", 2022, "Mathematiques", "Acad"));
-        utilisateurs.add(new Etudiant("Ali", "Ali", "31640603", "Etudiant", "El Harrach", 2022, "Mathematiques", "Acad"));
+        utilisateurs.add(new Etudiant("Soltani", "Asma", "31640602", "Etudiant", "Bab Ezzouar",
+            prefIndiff, dispoAll, 2022, "Informatique", "Acad"));
+        utilisateurs.add(new Etudiant("Nwel",   "Nawel", "31640607", "Etudiant", "El Harrach",
+            prefIndiff, dispoAll, 2022, "Mathematiques", "Acad"));
+        utilisateurs.add(new Etudiant("Amine",  "Amine",  "31640606", "Etudiant", "El Harrach",
+            prefIndiff, dispoAll, 2022, "Mathematiques", "Acad"));
+        utilisateurs.add(new Etudiant("Salim",  "Salim",  "31640605", "Etudiant", "El Harrach",
+            prefIndiff, dispoAll, 2022, "Mathematiques", "Acad"));
+        utilisateurs.add(new Etudiant("Younes", "Ali",    "31640601", "Etudiant", "El Harrach",
+            prefIndiff, dispoAll, 2022, "Mathematiques", "Acad"));
+        utilisateurs.add(new Etudiant("Ali",    "Ali",    "31640603", "Etudiant", "El Harrach",
+            prefIndiff, dispoAll, 2022, "Mathematiques", "Acad"));
 
-        utilisateurs.add(new Enseignant("Amina", "Amina", "33333333", "Enseignant", "Bab Ezzouar", 2019, "Informatique"));
-        utilisateurs.add(new Enseignant("Khaled", "Khaled", "33333334", "Enseignant", "El Harrach", 2018, "Mathematiques"));
-        utilisateurs.add(new Enseignant("Sofia", "Sofia", "33333335", "Enseignant", "El Harrach", 2017, "Mathematiques"));
+        utilisateurs.add(new Enseignant("Amina",  "Amina",  "33333333", "Enseignant", "Bab Ezzouar",
+            prefIndiff, dispoAll, 2019, "Informatique"));
+        utilisateurs.add(new Enseignant("Khaled", "Khaled", "33333334", "Enseignant", "El Harrach",
+            prefIndiff, dispoAll, 2018, "Mathematiques"));
+        utilisateurs.add(new Enseignant("Sofia",  "Sofia",  "33333335", "Enseignant", "El Harrach",
+            prefIndiff, dispoAll, 2017, "Mathematiques"));
 
-        utilisateurs.add(new ATS("Amina", "Amina", "ATS001", "ATS", "Bab Ezzouar", 2020, "Hydra"));
-        utilisateurs.add(new ATS("Slimani", "Moh", "ATS002", "ATS", "Bab Ezzouar", 2021, "Service Scolarite"));
+        utilisateurs.add(new ATS("Amina",  "Amina",  "ATS001", "ATS", "Bab Ezzouar",
+            prefIndiff, dispoAll, 2020, "Hydra"));
+        utilisateurs.add(new ATS("Slimani","Moh",    "ATS002", "ATS", "Bab Ezzouar",
+            prefIndiff, dispoAll, 2021, "Service Scolarite"));
 
         // Course planifiée
         Itineraire itineraire = new ItineraireChauffeur("Bab Ezzouar", List.of("Hydra"));
-        Disponibilite dispo = new Disponibilite(Disponibilite.TypeDisponibilite.HEBDOMADAIRE,
-            List.of(Disponibilite.Jour.LUNDI, Disponibilite.Jour.MERCREDI), "07:30", "17:00");
-        Course c = new Course(utilisateurs.get(1), itineraire, dispo, Course.TypeCourse.ALLER_SIMPLE, 3, Course.StatutCourse.PLANIFIEE);
-        courses.add(c);
+        Disponibilite dispo = new Disponibilite(
+            Disponibilite.TypeDisponibilite.HEBDOMADAIRE,
+            List.of(Disponibilite.Jour.LUNDI, Disponibilite.Jour.MERCREDI),
+            "07:30", "17:00");
+        courses.add(new Course(
+            utilisateurs.get(1), // Nawel
+            itineraire,
+            dispo,
+            Course.TypeCourse.ALLER_SIMPLE,
+            3,
+            Course.StatutCourse.PLANIFIEE));
     }
 
     private static void afficherMenuPrincipal() {
@@ -53,8 +84,7 @@ public class App {
             System.out.println("3. Visualiser statistiques");
             System.out.println("4. Quitter");
             System.out.print("Votre choix : ");
-            choix = scanner.nextInt();
-            scanner.nextLine();
+            choix = scanner.nextInt(); scanner.nextLine();
 
             switch (choix) {
                 case 1 -> gererUtilisateurs();
@@ -74,7 +104,7 @@ public class App {
         System.out.println("4. Retour");
         int c = scanner.nextInt(); scanner.nextLine();
         switch (c) {
-            case 1 -> utilisateurs.forEach(u -> System.out.println(u));
+            case 1 -> utilisateurs.forEach(System.out::println);
             case 2 -> ajouterUtilisateur();
             case 3 -> {
                 System.out.print("Entrez le matricule à supprimer : ");
@@ -82,7 +112,7 @@ public class App {
                 utilisateurs.removeIf(u -> u.getMatricule().equals(mat));
                 System.out.println("Suppression effectuée si le matricule existait.");
             }
-            case 4 -> { /* Retour */ }
+            case 4 -> {/* retour */}
             default -> System.out.println("Choix invalide");
         }
     }
@@ -95,26 +125,38 @@ public class App {
         System.out.print("Matricule : "); String mat = scanner.nextLine();
         System.out.print("Statut : "); String statut = scanner.nextLine();
         System.out.print("Point de depart : "); String point = scanner.nextLine();
+        // Préférences et dispos par défaut
+        Preference pref = new Preference(
+            Preference.SexePreference.INDIFFERENT,
+            Preference.MusiquePreference.INDIFFERENT,
+            Preference.BagagePreference.INDIFFERENT);
+        Disponibilite dispo = new Disponibilite(
+            Disponibilite.TypeDisponibilite.QUOTIDIEN,
+            Arrays.asList(Disponibilite.Jour.values()),
+            "00:00", "23:59");
         switch (type) {
             case 1 -> {
                 System.out.print("Annee admission : "); int annee = scanner.nextInt(); scanner.nextLine();
                 System.out.print("Faculte : "); String fac = scanner.nextLine();
                 System.out.print("Specialite : "); String spec = scanner.nextLine();
-                utilisateurs.add(new Etudiant(nom, prenom, mat, statut, point, annee, fac, spec));
+                utilisateurs.add(new Etudiant(nom, prenom, mat, statut, point, pref, dispo,
+                    annee, fac, spec));
             }
             case 2 -> {
-                System.out.print("Annee recrutement : "); int anneeRec = scanner.nextInt(); scanner.nextLine();
+                System.out.print("Annee recrutement : "); int anRec = scanner.nextInt(); scanner.nextLine();
                 System.out.print("Faculte : "); String facE = scanner.nextLine();
-                utilisateurs.add(new Enseignant(nom, prenom, mat, statut, point, anneeRec, facE));
+                utilisateurs.add(new Enseignant(nom, prenom, mat, statut, point, pref, dispo,
+                    anRec, facE));
             }
             case 3 -> {
-                System.out.print("Annee recrutement : "); int anRec = scanner.nextInt(); scanner.nextLine();
+                System.out.print("Annee recrutement : "); int anRec2 = scanner.nextInt(); scanner.nextLine();
                 System.out.print("Service : "); String serv = scanner.nextLine();
-                utilisateurs.add(new ATS(nom, prenom, mat, statut, point, anRec, serv));
+                utilisateurs.add(new ATS(nom, prenom, mat, statut, point, pref, dispo,
+                    anRec2, serv));
             }
             default -> System.out.println("Type invalide");
         }
-        System.out.println("Utilisateur ajoute.");
+        System.out.println("Utilisateur ajouté.");
     }
 
     private static void gererCourses() {
@@ -130,7 +172,7 @@ public class App {
             case 2 -> rechercherCoursesPassager();
             case 3 -> ajouterPassager();
             case 4 -> changerStatutCourse();
-            case 5 -> { /* Retour */ }
+            case 5 -> {/* retour */}
             default -> System.out.println("Choix invalide");
         }
     }
@@ -141,7 +183,7 @@ public class App {
         Utilisateur passager = utilisateurs.stream()
             .filter(u -> u.getMatricule().equals(mat)).findFirst().orElse(null);
         if (passager == null) { System.out.println("Passager non trouve"); return; }
-        System.out.println("Courses compatibles :");
+        System.out.println("Courses compatibles :");
         courses.stream()
             .filter(c -> c.isCompatible(passager, c.getConducteur()))
             .forEach(System.out::println);
@@ -154,12 +196,13 @@ public class App {
         Course course = courses.get(idx);
         System.out.print("Matricule du passager : ");
         String mat = scanner.nextLine();
-        Utilisateur p = utilisateurs.stream().filter(u -> u.getMatricule().equals(mat)).findFirst().orElse(null);
+        Utilisateur p = utilisateurs.stream()
+            .filter(u -> u.getMatricule().equals(mat)).findFirst().orElse(null);
         if (p == null) { System.out.println("Passager non trouve"); return; }
         try {
             if (course.addPassager(p)) System.out.println("Ajout reussi");
         } catch (Exception e) {
-            System.out.println("Erreur : " + e.getMessage());
+            System.out.println("Erreur : " + e.getMessage());
         }
     }
 
@@ -173,45 +216,76 @@ public class App {
         try {
             if (choix == 1) course.demarrerCourse();
             else if (choix == 2) course.terminerCourse();
-            System.out.println("Statut mis a jour : " + course.getStatut());
+            System.out.println("Statut mis a jour : " + course.getStatut());
         } catch (Exception e) {
-            System.out.println("Erreur : " + e.getMessage());
+            System.out.println("Erreur : " + e.getMessage());
         }
     }
 
     private static void afficherStatistiques() {
-        System.out.println("\n--- Statistiques ---");
-        long nbEtudiants = utilisateurs.stream().filter(u -> u instanceof Etudiant).count();
-        long nbEnseignants = utilisateurs.stream().filter(u -> u instanceof Enseignant).count();
-        long nbATS = utilisateurs.stream().filter(u -> u instanceof ATS).count();
-        System.out.println("Etudiants : " + nbEtudiants);
-        System.out.println("Enseignants : " + nbEnseignants);
-        System.out.println("ATS : " + nbATS);
+        int choix;
+        do {
+            System.out.println("\n--- Statistiques ---");
+            System.out.println("1. Statistiques générales");
+            System.out.println("2. Utilisateurs actifs ce mois");
+            System.out.println("3. Top/Pire 3 par reputation");
+            System.out.println("4. Historique et état des courses");
+            System.out.println("5. Afficher planning");
+            System.out.println("6. Retour");
+            System.out.print("Votre choix : ");
+            choix = scanner.nextInt(); scanner.nextLine();
+            switch (choix) {
+                case 1 -> {
+                    long nbEt = utilisateurs.stream().filter(u -> u instanceof Etudiant).count();
+                    long nbEns = utilisateurs.stream().filter(u -> u instanceof Enseignant).count();
+                    long nbATS = utilisateurs.stream().filter(u -> u instanceof ATS).count();
+                    System.out.println("Etudiants : " + nbEt + ", Enseignants : " + nbEns + ", ATS : " + nbATS);
+                }
+                case 2 -> {
+                    // utilisateurs ayant participé à ≥1 course ce mois (non implémenté)
+                    System.out.println("<Fonctionnalité à implémenter>");
+                }
+                case 3 -> {
+                    System.out.println("Top 3 :");
+                    utilisateurs.stream()
+                        .sorted(Comparator.comparingDouble(Utilisateur::getReputation).reversed())
+                        .limit(3).forEach(u -> System.out.println(u));
+                    System.out.println("Pire 3 :");
+                    utilisateurs.stream()
+                        .sorted(Comparator.comparingDouble(Utilisateur::getReputation))
+                        .limit(3).forEach(u -> System.out.println(u));
+                }
+                case 4 -> {
+                    System.out.println("Historique des courses terminées :");
+                    courses.stream().filter(c -> c.getStatut() == Course.StatutCourse.TERMINEE)
+                        .forEach(System.out::println);
+                    long nbPlanifiees = courses.stream()
+                        .filter(c -> c.getStatut() == Course.StatutCourse.PLANIFIEE)
+                        .count();
+                    System.out.println("Etat : planifiées=" + nbPlanifiees);
+                }
+                case 5 -> afficherPlanning();
+                case 6 -> {}
+                default -> System.out.println("Choix invalide");
+            }
+        } while (choix != 6);
+    }
 
-        // Top 3 chauffeurs par reputation
-        System.out.println("\nTop 3 utilisateurs par reputation :");
-        utilisateurs.stream()
-            .sorted(Comparator.comparingDouble(Utilisateur::getReputation).reversed())
-            .limit(3)
-            .forEach(u -> System.out.println(u + " - " + String.format("%.2f", u.getReputation())));
+    private static void afficherPlanning() {
+        System.out.println("\n--- Planning des courses ---");
+        Map<Disponibilite.Jour, List<Course>> parJour = courses.stream()
+            .flatMap(c -> c.getDisponibilite().getJoursDisponibles().stream()
+                .map(j -> Map.entry(j, c)))
+            .collect(Collectors.groupingBy(Map.Entry::getKey,
+                Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
-        // Pire 3 utilisateurs
-        System.out.println("\nPire 3 utilisateurs par reputation :");
-        utilisateurs.stream()
-            .sorted(Comparator.comparingDouble(Utilisateur::getReputation))
-            .limit(3)
-            .forEach(u -> System.out.println(u + " - " + String.format("%.2f", u.getReputation())));
-
-        // Historique des courses
-        System.out.println("\nHistorique des courses :");
-        courses.stream()
-            .filter(c -> c.getStatut() == Course.StatutCourse.TERMINEE)
-            .forEach(System.out::println);
-
-        // Etat des courses
-        System.out.println("\nEtat des courses :");
-        System.out.println("Planifiees : " + courses.stream().filter(c -> c.getStatut() == Course.StatutCourse.PLANIFIEE).count());
-        System.out.println("En cours : " + courses.stream().filter(c -> c.getStatut() == Course.StatutCourse.EN_COURS).count());
-        System.out.println("Terminees : " + courses.stream().filter(c -> c.getStatut() == Course.StatutCourse.TERMINEE).count());
+        for (Disponibilite.Jour jour : parJour.keySet()) {
+            System.out.println(jour + ":");
+            for (Course c : parJour.get(jour)) {
+                LocalTime hd = c.getDisponibilite().getHeureDepart();
+                LocalTime hr = c.getDisponibilite().getHeureRetour();
+                System.out.println("  - [" + hd + "-" + hr + "] " + c);
+            }
+        }
     }
 }

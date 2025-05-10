@@ -8,10 +8,11 @@ public class Etudiant extends Utilisateur {
     public String getFullName() {
         return getNom() + " " + getPrenom();
     }
-
+//// HNA TAN , ZEDT PREF ET DISP 
     public Etudiant(String nom, String prenom, String matricule, String statut, String pointDepart,
+                    Preference pref, Disponibilite dispos,
                     int anneeAdmission, String faculte, String specialite) {
-        super(nom, prenom, matricule, statut, pointDepart);
+        super(nom, prenom, matricule, statut, pointDepart, pref, dispos);
         this.anneeAdmission = anneeAdmission;
         this.faculte = faculte;
         this.specialite = specialite;

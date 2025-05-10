@@ -1,109 +1,37 @@
 package CovoiturePack;
 public class Preference {
+    public enum SexePreference { GARCON, FILLE, INDIFFERENT }
+    public enum MusiquePreference { AVEC_MUSIQUE, SANS_MUSIQUE, INDIFFERENT }
+    public enum BagagePreference { AVEC_BAGAGE, SANS_BAGAGE, INDIFFERENT }
 
-    public enum SexePreference {
+    private SexePreference sexe;
+    private MusiquePreference musique;
+    private BagagePreference bagage;
 
-        GARÇON,
-
-        FILLE,
-
-        INDIFFÉRENT
-
+    public Preference(SexePreference sexe, MusiquePreference musique, BagagePreference bagage) {
+        this.sexe = sexe;
+        this.musique = musique;
+        this.bagage = bagage;
     }
 
+    // getters/setters omitted for brevity
 
-    public enum MusiquePreference {
-
-        AVEC_MUSIQUE,
-
-        SANS_MUSIQUE,
-
-        INDIFFÉRENT
-
+    public boolean isMatch(Preference autre) {
+        return match(this.sexe, autre.sexe)
+            && match(this.musique, autre.musique)
+            && match(this.bagage, autre.bagage);
     }
 
-
-    public enum BagagePreference {
-
-        AVEC_BAGAGE,
-
-        SANS_BAGAGE,
-
-        INDIFFÉRENT
-
+    private <T extends Enum<T>> boolean match(T a, T b) {
+        // "INDIFFERENT" value matches always
+        if (a.name().equals("INDIFFERENT") || b.name().equals("INDIFFERENT")) return true;
+        return a.equals(b);
     }
-
-
-    private SexePreference sexePreference;
-
-    private MusiquePreference musiquePreference;
-
-    private BagagePreference bagagePreference;
-
-
-    public Preference(SexePreference sexePreference, MusiquePreference musiquePreference, BagagePreference bagagePreference) {
-
-        this.sexePreference = sexePreference;
-
-        this.musiquePreference = musiquePreference;
-
-        this.bagagePreference = bagagePreference;
-
-    }
-
-
-    public SexePreference getSexePreference() {
-
-        return sexePreference;
-
-    }
-
-
-    public void setSexePreference(SexePreference sexePreference) {
-
-        this.sexePreference = sexePreference;
-
-    }
-
-
-    public MusiquePreference getMusiquePreference() {
-
-        return musiquePreference;
-
-    }
-
-
-    public void setMusiquePreference(MusiquePreference musiquePreference) {
-
-        this.musiquePreference = musiquePreference;
-
-    }
-
-
-    public BagagePreference getBagagePreference() {
-
-        return bagagePreference;
-
-    }
-
-
-    public void setBagagePreference(BagagePreference bagagePreference) {
-
-        this.bagagePreference = bagagePreference;
-
-    }
-
 
     @Override
-
     public String toString() {
-
-        return "Préférences : Sexe = " + sexePreference +
-
-               ", Musique = " + musiquePreference +
-
-               ", Bagages = " + bagagePreference;
-
+        return "Préférences : Sexe = " + sexe
+             + ", Musique = " + musique
+             + ", Bagages = " + bagage;
     }
-
 }
