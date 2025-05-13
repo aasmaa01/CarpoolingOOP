@@ -3,6 +3,7 @@ package CovoiturePack;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate; 
 
 /**
  * Classe Course pour gérer les trajets dans un système de covoiturage.
@@ -28,6 +29,8 @@ public class Course {
     private TypeCourse typeCourse;
     private int capacite;
     private StatutCourse statut;
+    private LocalDate dateCreation;
+public LocalDate getDateCreation() { return dateCreation; }
 
     /**
      * Constructeur de la classe Course.
@@ -51,6 +54,7 @@ public class Course {
         this.capacite = capacite;
         this.passagers = new ArrayList<>();
         this.statut = statut;
+        this.dateCreation= LocalDate.now();
     }
 
     // --- Getters & setters ---
@@ -86,15 +90,12 @@ public class Course {
      * @return true si compatible, false sinon
      */
     public boolean isCompatible(Utilisateur passager, Utilisateur conducteur) {
-        // a) Itinéraire
-        Itineraire itinCond = this.itineraire;
-        // pour l'exemple, on reconstitue un itinéraire passager simple
-        Itineraire itinPass = new ItinerairePassager(
-            passager.getPointDepart(),
-            /* à remplacer par la destination réelle du passager */ "Destination"
-        );
-        boolean itinOk = itinCond.getPointDepart().equals(itinPass.getPointDepart())
-                       && itinCond.getPointsArrivee().containsAll(itinPass.getPointsArrivee());
+        // a) Itinéraire : on accepte les passagers partant du point de départ du conducteur
+        // ou partant d'un point d'arrivée (trajet retour)
+        String depCond = itineraire.getPointDepart();
+        List<String> arrCond = itineraire.getPointsArrivee();
+        String depPass = passager.getPointDepart();
+        boolean itinOk = depCond.equals(depPass) || arrCond.contains(depPass);
         if (!itinOk) return false;
 
         // b) Préférences
@@ -111,9 +112,9 @@ public class Course {
                 return false;
             }
         }
-
         return true;
     }
+
 
     /**
      * Ajoute un passager à la course après vérification de la compatibilité et de la capacité.
