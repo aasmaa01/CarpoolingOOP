@@ -55,7 +55,7 @@ Voici la modélisation UML du projet, représentant les relations entre les diff
 ## 📎 Liens utiles
 
 - 📘 [Spécifications projet (Notion)](https://www.notion.so/code-1e8eae282e108093ba4dca8f9f637d15?pvs=21)
-- 📄 Rapport PDF (à venir)
+- 📄 [Rapport](https://docs.google.com/document/d/11d5ZRnAIFTjFg4ZOMf05UF2fxC-1p0xjHYzmP_gDW74/edit?usp=drivesdk)
 - ☕ Projet Java (dans ce repo)
 
 ---
